@@ -1,0 +1,81 @@
+version: '3.9'
+
+services:
+
+  nginx:
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    env_file: .env
+    depends_on:
+      - wordpress
+    volumes:
+      - wp_data:/var/www/html
+      - certs:/etc/nginx/ssl
+    ports:
+      - "443:443"
+    networks:
+      - inception
+    restart: always
+
+    healthcheck:
+      test: ["CMD", "curl", "-k", "https://localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  wordpress:
+    build:
+      context: ./requirements/wordpress
+      dockerfile: Dockerfile
+    container_name: wordpress
+    env_file: .env
+    depends_on:
+      - mariadb
+    volumes:
+      - wp_data:/var/www/html
+    expose:
+      - "9000"
+    networks:
+      - inception
+    restart: always
+
+    healthcheck:
+      test: ["CMD", "php-fpm8.2", "-t"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+  mariadb:
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+    container_name: mariadb
+    env_file: .env
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - inception
+    restart: always
+    
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+volumes:
+  wp_data:
+    driver: local
+  db_data:
+    driver: local
+  certs:
+    driver: local
+
+networks:
+  inception:
+    name: inception
+
