@@ -1,5 +1,7 @@
 FROM debian:bookworm
 
+WORKDIR /var/www/wordpress
+
 # Atualização e instalação de dependências
 RUN apt-get update && apt-get install -y \
     php-fpm \
@@ -15,11 +17,15 @@ RUN apt-get update && apt-get install -y \
     vim \
     && rm -rf /var/lib/apt/lists/*
 
-# Diretório onde ficará o WordPress
-RUN mkdir -p /var/www/html && \
-    chown -R www-data:www-data /var/www/html
+# se der errado, chmod na pasta
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp && \
+    wp core download --allow-root --path=/var/www/wordpress
 
-WORKDIR /var/www/html
+# Diretório onde ficará o WordPress
+RUN chmod 755 /var/www/wordpress && \
+    chown -R www-data:www-data /var/www/wordpress
 
 # Copia configuração do PHP-FPM
 COPY conf/www.conf /etc/php/*/fpm/pool.d/www.conf

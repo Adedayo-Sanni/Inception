@@ -20,25 +20,20 @@ echo "==> MariaDB pronto."
 # -------------------------------
 if [ ! -f /usr/local/bin/wp ]; then
     echo "==> Instalando WP-CLI..."
-    curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-    chmod +x wp-cli.phar
-    mv wp-cli.phar /usr/local/bin/wp
 fi
 
 # -------------------------------
 # AJUSTAR PERMISSÕES DO VOLUME
 # -------------------------------
-echo "==> Ajustando permissões..."
-chown -R www-data:www-data "$WP_PATH"
-chmod -R 775 "$WP_PATH"
+#echo "==> Ajustando permissões..."
+#chown -R www-data:www-data "$WP_PATH"
+#chmod -R 775 "$WP_PATH"
 
 # -------------------------------
 # INSTALAR WORDPRESS SE NECESSÁRIO
 # -------------------------------
 if [ ! -f "$WP_PATH/wp-config.php" ]; then
     echo "==> Baixando WordPress..."
-    wp core download --allow-root --path="$WP_PATH"
-
     echo "==> Criando wp-config.php..."
     wp config create --allow-root \
         --dbname="$DB_NAME" \
