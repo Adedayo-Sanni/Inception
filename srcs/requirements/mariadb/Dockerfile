@@ -1,13 +1,14 @@
 FROM debian:bookworm
 
+
+RUN apt-get update && \
+apt-get install -y mariadb-server mariadb-client && \
+rm -rf /var/lib/apt/lists/*
+
 # Atualiza e instala MariaDB server
 RUN mkdir -p /run/mysqld && \
     chown -R mysql:mysql /run/mysqld
-
-RUN apt-get update && \
-    apt-get install -y mariadb-server mariadb-client && \
-    rm -rf /var/lib/apt/lists/*
-
+    
 # Copia configuração e scripts
 COPY conf/my.cnf /etc/mysql/my.cnf
 COPY tools/setup-db.sh /usr/local/bin/setup-db.sh
