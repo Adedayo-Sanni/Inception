@@ -8,6 +8,7 @@ EXPOSE 443
 
 RUN mkdir -p /var/www/html && \
     mkdir -p /etc/nginx/ssl && \
+    chmod 755 /var/www/html && \
     chown -R www-data:www-data /var/www/html
 
 COPY conf/nginx.conf /etc/nginx/nginx.conf
