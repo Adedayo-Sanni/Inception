@@ -2,7 +2,7 @@
 #                                   INCEPTION                                  #
 # **************************************************************************** #
 
-COMPOSE_FILE = ./docker-compose.yml
+COMPOSE_FILE = ./srcs/docker-compose.yml
 PROJECT_NAME = inception
 
 # Volume names
