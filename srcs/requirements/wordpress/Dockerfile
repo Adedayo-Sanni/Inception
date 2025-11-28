@@ -18,14 +18,20 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # se der errado, chmod na pasta
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-    chmod +x wp-cli.phar && \
-    mv wp-cli.phar /usr/local/bin/wp && \
-    wp core download --allow-root --path=/var/www/html
+#RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+ #   chmod +x wp-cli.phar && \
+  #  mv wp-cli.phar /usr/local/bin/wp && \
+   # wp core download --allow-root --path=/var/www/html
 
+   
+RUN wget https://wordpress.org/latest.tar.gz -O /tmp/wordpress.tar.gz && \
+   tar -xzf /tmp/wordpress.tar.gz -C /tmp && \
+   rm -rf /var/www/html/* && \
+   mv /tmp/wordpress/* /var/www/html
+   
 # Diretório onde ficará o WordPress
 RUN chmod 755 /var/www/html && \
-    chown -R www-data:www-data /var/www/html
+       chown -R www-data:www-data /var/www/html
 
 # Copia configuração do PHP-FPM
 COPY conf/www.conf /etc/php/*/fpm/pool.d/www.conf
