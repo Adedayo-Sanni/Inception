@@ -4,6 +4,18 @@ set -e
 
 WP_PATH="/var/www/html"
 
+########
+#ver se isso funciona
+# Se o volume estiver vazio, copiar WordPress da imagem
+if [ ! -f "$WP_PATH/wp-config.php" ]; then
+    echo "==> Volume vazio. Copiando WordPress inicial..."
+    cp -R /usr/src/wordpress/* "$WP_PATH"/
+    chown -R www-data:www-data "$WP_PATH"
+fi
+
+##########
+
+
 echo "==> Iniciando WordPress entrypoint..."
 
 # -------------------------------
@@ -14,6 +26,7 @@ while ! mariadb -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" &>/dev/nul
     sleep 1
 done
 echo "==> MariaDB pronto."
+
 
 # -------------------------------
 # INSTALAR WP-CLI (se não existir)

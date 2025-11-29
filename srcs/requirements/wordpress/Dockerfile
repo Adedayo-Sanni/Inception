@@ -17,24 +17,28 @@ RUN apt-get update && apt-get install -y \
     vim \
     && rm -rf /var/lib/apt/lists/*
 
-# se der errado, chmod na pasta
-#RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
- #   chmod +x wp-cli.phar && \
-  #  mv wp-cli.phar /usr/local/bin/wp && \
-   # wp core download --allow-root --path=/var/www/html
+# -------------------------------------
+# INSTALAR WP-CLI 
+# -------------------------------------
+RUN curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x /usr/local/bin/wp
 
-   
+# -------------------------------------
+# BAIXAR WORDPRESS
+# -------------------------------------
 RUN wget https://wordpress.org/latest.tar.gz -O /tmp/wordpress.tar.gz && \
-   tar -xzf /tmp/wordpress.tar.gz -C /tmp && \
-   rm -rf /var/www/html/* && \
-   mv /tmp/wordpress/* /var/www/html
-   
-# Diretório onde ficará o WordPress
+    tar -xzf /tmp/wordpress.tar.gz -C /tmp && \
+    #rm -rf /var/www/html/* && \
+    #mv /tmp/wordpress/* /var/www/html 
+    # o que tava antes
+    mv /tmp/wordpress /usr/src/wordpress
+
+
 RUN chmod 755 /var/www/html && \
-       chown -R www-data:www-data /var/www/html
+    chown -R www-data:www-data /var/www/html
 
 # Copia configuração do PHP-FPM
-COPY conf/www.conf /etc/php/*/fpm/pool.d/www.conf
+COPY conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 
 # Copia entrypoint
 COPY tools/entrypoint.sh /usr/local/bin/entrypoint.sh
