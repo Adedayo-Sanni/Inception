@@ -48,13 +48,14 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10s
+  
   mariadb:
     build:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
     container_name: mariadb
     env_file:
-    - /home/cadete/secrets/.env
+     - /home/cadete/secrets/.env
     volumes:
       - db_data:/var/lib/mysql
     networks:
@@ -70,13 +71,21 @@ services:
 
 volumes:
   wp_data:
-    driver: local
+    name: wp_data
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/asanni/data/wordpress
   db_data:
-    driver: local
+    name: db_data
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/asanni/data/mariadb
   certs:
     driver: local
 
 networks:
   inception:
     name: inception
-
+    driver: bridge

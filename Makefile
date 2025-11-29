@@ -11,7 +11,19 @@ VOLUME_DB = db_data
 VOLUME_CERTS = certs
 
 # Default target
-all: up
+all: config up
+
+config:
+	@if ! grep -q asanni /etc/hosts; then \
+		echo "127.0.0.1 asanni.42.fr" | sudo tee -a /etc/hosts > /dev/null; \
+	fi
+
+	@if [ ! -d "/home/asanni/data/wordpress" ]; then \
+		sudo mkdir -p /home/asanni/data/wordpress; \
+	fi
+	@if [ ! -d "/home/asanni/data/mariadb" ]; then \
+		sudo mkdir -p /home/asanni/data/mariadb; \
+	fi
 
 # -----------------------------------------------------------------------------#
 # Build containers without starting them
@@ -23,7 +35,7 @@ build:
 # Start containers (builds automatically if needed)
 # -----------------------------------------------------------------------------#
 up:
-	@docker compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up -d
+	@docker compose -p $(PROJECT_NAME) -f $(COMPOSE_FILE) up --build -d
 
 # -----------------------------------------------------------------------------#
 # Stop containers but keep data
@@ -44,6 +56,7 @@ fclean: down
 	@docker volume rm -f $(VOLUME_WP) $(VOLUME_DB) $(VOLUME_CERTS)
 	@docker system prune -af
 	@docker network rm $(PROJECT_NAME)_inception 2>/dev/null || true
+	@sudo rm -fr /home/asanni
 
 # -----------------------------------------------------------------------------#
 # Rebuild everything from zero
